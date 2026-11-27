@@ -2,10 +2,11 @@ import Constants from "expo-constants";
 import { Observe } from "expo-observe";
 
 // Importing expo-observe installs its global JS error handler; reports leave only through the relay.
-const relayUrl: unknown = Constants.expoConfig?.extra?.relay?.url;
+// Telemetry-free fork: crash reports and startup timings are never dispatched, so
+// reporting is not offered in Settings at all.
 const appVariant: unknown = Constants.expoConfig?.extra?.appVariant;
 
-export const crashReportingAvailable = typeof relayUrl === "string" && relayUrl.trim() !== "";
+export const crashReportingAvailable = false;
 
 interface PromiseRejectionTracker {
   readonly enablePromiseRejectionTracker?: (options: {
@@ -28,8 +29,10 @@ let latestConfiguration = 0;
 // While sending is off, a dispatch pass drops what it finds, so one runs before turning it back on.
 // Best effort: Observe skips the pass while it is backing off from a failed send.
 export async function setCrashReportsEnabled(enabled: boolean) {
+  void enabled;
   const configuration = ++latestConfiguration;
-  const dispatchingEnabled = crashReportingAvailable && enabled;
+  // Telemetry-free fork: dispatch stays off even if a stored preference says on.
+  const dispatchingEnabled = false;
   if (dispatchingEnabled) {
     await Observe.dispatchEvents();
     if (configuration !== latestConfiguration) return;

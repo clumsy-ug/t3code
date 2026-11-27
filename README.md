@@ -27,6 +27,18 @@ T3 Code runs the coding agents on your machine and gives them one fast interface
 
 It works with Claude Code, Codex, Cursor, OpenCode, Grok Build, Antigravity, Kiro, Pi, Muse Code, fx, and any [ACP](./docs/user/providers-acp.md) agent. If an agent is set up on your computer, T3 Code can control it.
 
+## This fork: telemetry-free
+
+This repository is a fork of [pingdotgg/t3code](https://github.com/pingdotgg/t3code) (MIT) that removes or disables, in code, every feature that sends usage or diagnostics data to the T3 team. Environment variables and Settings toggles are not trusted to do this; the send paths themselves are neutered:
+
+- **Product usage events** — the server analytics service is a permanent no-op. Nothing is sent to `ingest.t3.codes` or PostHog.
+- **Relay connection traces** — the shared relay tracing layer never exports traces (upstream sent them to Axiom), on the server, web, and mobile clients.
+- **Mobile diagnostics** — crash reports and startup timings are never dispatched, the crash-report setting is not offered, connection traces are forced off, and mobile builds no longer default to an Axiom endpoint.
+- **Agent feedback** — reports are stored locally only; their delivery went through the analytics service, so they can no longer leave the machine even if the Labs setting is on.
+- **Agent activity publishing** — forced off in code, so project and thread titles are never published to the T3 Connect relay for mobile notifications or Live Activities.
+
+What still connects, by design: the coding-agent providers you sign in to, T3 Connect relay transport when you use remote access, desktop update checks, and OpenTelemetry export to a receiver **you** configure yourself. We intend to keep tracking upstream releases and re-apply this patch set.
+
 ## What you get
 
 - **Your subscriptions.** T3 Code does not resell tokens. It drives the agents you are already signed in to.

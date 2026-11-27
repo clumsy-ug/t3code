@@ -41,7 +41,10 @@ export const decodeConfirmedOrigin = Schema.decodeUnknownOption(
 );
 
 export function isAgentActivityPublishingEnabledValue(value: string | null): boolean {
-  return value === "true";
+  // Telemetry-free fork: agent activity (project/thread titles) is never published
+  // to the T3 Connect relay, even if the setting or stored secret says "true".
+  void value;
+  return false;
 }
 
 /**
